@@ -2,6 +2,19 @@
 
 set -e
 
+__build_service() {
+  SERVICE=$1
+
+  if ! [ -d "${SERVICE}" ]
+  then
+    echo "The service \"${SERVICE}\" doesn't exist."
+    return 1
+  fi
+
+  cd "${SERVICE}"
+  echo "Building the service ${SERVICE} ..."
+}
+
 __build_everything() {
   echo "Building everything ..."
   for i in $(find . -depth 2 -name "package.json")
@@ -30,10 +43,15 @@ __build_updated_directories() {
   done
 }
 
-CURRENT_BRANCH_NAME=$(git branch | cut -d" " -f2)
-if [ "${CURRENT_BRANCH_NAME}" = "master" ]
+if [ -z $* ]
 then
-  __build_everything
+  CURRENT_BRANCH_NAME=$(git branch | cut -d" " -f2)
+  if [ "${CURRENT_BRANCH_NAME}" = "master" ]
+  then
+    __build_everything
+  else
+    __build_updated_directories
+  fi
 else
-  __build_updated_directories
+  __build_service $1
 fi

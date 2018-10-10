@@ -4,7 +4,7 @@ set -e
 
 __build_everything() {
   echo "Building everything ..."
-  for i in $(find . -maxdepth 2 -name "package.json")
+  for i in $(find . -depth 2 -name "package.json")
   do
     CURRENT_DIRECTORY_NAME=$(dirname $i | sed -re "s@\.\/@@g")
     cd "${CURRENT_DIRECTORY_NAME}"
